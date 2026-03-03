@@ -16,10 +16,12 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun get(context: Context): AppDatabase = instance ?: synchronized(this) {
             val deviceContext = context.applicationContext.createDeviceProtectedStorageContext()
-            deviceContext.moveDatabaseFrom(context.applicationContext, "stellar.db")
-            instance ?: Room.databaseBuilder(deviceContext, AppDatabase::class.java, "stellar.db")
+            runCatching { deviceContext.moveDatabaseFrom(context.applicationContext, DATABASE_NAME) }
+            instance ?: Room.databaseBuilder(deviceContext, AppDatabase::class.java, DATABASE_NAME)
                 .fallbackToDestructiveMigration()
                 .build().also { instance = it }
         }
+
+        private const val DATABASE_NAME = "stellar.db"
     }
 }
