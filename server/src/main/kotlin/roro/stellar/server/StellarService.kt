@@ -336,6 +336,17 @@ class StellarService : IStellarService.Stub() {
         LOGGER.i("进程守护已%s", if (enabled) "启用" else "禁用")
     }
 
+    override fun getSystemService(name: String?): android.os.IBinder? {
+        val caller = CallerContext.fromBinder()
+        permissionEnforcer.enforcePermission(caller, "getSystemService")
+
+        if (name == null) return null
+
+        return Class.forName("android.os.ServiceManager")
+            .getMethod("getService", String::class.java)
+            .invoke(null, name) as? android.os.IBinder
+    }
+
     private fun stopDaemon() {
         DaemonManager.stopDaemon()
     }
