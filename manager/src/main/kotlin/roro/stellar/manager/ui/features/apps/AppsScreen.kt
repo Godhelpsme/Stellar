@@ -33,12 +33,12 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material3.Card
@@ -450,11 +450,14 @@ fun AppsScreen(
                         }
                     }
 
-                    if (isSelectionMode) {
+                    AnimatedVisibility(
+                        visible = isSelectionMode,
+                        enter = slideInHorizontally(initialOffsetX = { -it }),
+                        exit = slideOutHorizontally(targetOffsetX = { -it }),
+                        modifier = Modifier.align(Alignment.BottomStart)
+                    ) {
                         Column(
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .padding(16.dp),
+                            modifier = Modifier.padding(16.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             ExtendedFloatingActionButton(
@@ -462,6 +465,7 @@ fun AppsScreen(
                                     val allApps = (stellarApps + shizukuApps).map { it.packageInfo.packageName }
                                     selectedApps = if (selectedApps.size == allApps.size) emptySet() else allApps.toSet()
                                 },
+                                shape = AppShape.shapes.fab,
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 elevation = FloatingActionButtonDefaults.elevation(2.dp, 2.dp, 2.dp, 2.dp),
                                 icon = { Icon(Icons.Default.SelectAll, contentDescription = null, modifier = Modifier.size(22.dp)) },
@@ -472,17 +476,23 @@ fun AppsScreen(
                                     isSelectionMode = false
                                     selectedApps = emptySet()
                                 },
+                                shape = AppShape.shapes.fab,
                                 containerColor = MaterialTheme.colorScheme.errorContainer,
                                 elevation = FloatingActionButtonDefaults.elevation(2.dp, 2.dp, 2.dp, 2.dp),
                                 icon = { Icon(Icons.Default.Close, contentDescription = null, modifier = Modifier.size(22.dp)) },
                                 text = { Text(stringResource(R.string.cancel), style = MaterialTheme.typography.labelMedium) }
                             )
                         }
+                    }
 
+                    AnimatedVisibility(
+                        visible = isSelectionMode,
+                        enter = slideInHorizontally(initialOffsetX = { it }),
+                        exit = slideOutHorizontally(targetOffsetX = { it }),
+                        modifier = Modifier.align(Alignment.BottomEnd)
+                    ) {
                         Column(
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(16.dp),
+                            modifier = Modifier.padding(16.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             ExtendedFloatingActionButton(
@@ -503,9 +513,10 @@ fun AppsScreen(
                                     isSelectionMode = false
                                     selectedApps = emptySet()
                                 },
+                                shape = AppShape.shapes.fab,
                                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                                 elevation = FloatingActionButtonDefaults.elevation(2.dp, 2.dp, 2.dp, 2.dp),
-                                icon = { Icon(Icons.Default.HelpOutline, contentDescription = null, modifier = Modifier.size(22.dp)) },
+                                icon = { Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = null, modifier = Modifier.size(22.dp)) },
                                 text = { Text(stringResource(R.string.permission_ask), style = MaterialTheme.typography.labelMedium) }
                             )
                             ExtendedFloatingActionButton(
@@ -526,6 +537,7 @@ fun AppsScreen(
                                     isSelectionMode = false
                                     selectedApps = emptySet()
                                 },
+                                shape = AppShape.shapes.fab,
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 elevation = FloatingActionButtonDefaults.elevation(2.dp, 2.dp, 2.dp, 2.dp),
                                 icon = { Icon(Icons.Default.CheckCircle, contentDescription = null, modifier = Modifier.size(22.dp)) },
@@ -549,6 +561,7 @@ fun AppsScreen(
                                     isSelectionMode = false
                                     selectedApps = emptySet()
                                 },
+                                shape = AppShape.shapes.fab,
                                 containerColor = MaterialTheme.colorScheme.errorContainer,
                                 elevation = FloatingActionButtonDefaults.elevation(2.dp, 2.dp, 2.dp, 2.dp),
                                 icon = { Icon(Icons.Default.Block, contentDescription = null, modifier = Modifier.size(22.dp)) },
